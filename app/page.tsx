@@ -25,7 +25,13 @@ export default function Home() {
         }
         
         const data = await response.json()
-        setRecipes(data)
+        // Map recipes to ensure dish_image_url is available
+        const mappedRecipes = data.map((recipe: any) => ({
+          ...recipe,
+          image: recipe.dish_image_url || recipe.dishImage || recipe.image || '',
+          dish_image_url: recipe.dish_image_url || recipe.dishImage || recipe.image || '',
+        }))
+        setRecipes(mappedRecipes)
       } catch (error) {
         console.error('Error fetching default recipes:', error)
         // Set empty array on error to show no recipes message
@@ -87,7 +93,8 @@ export default function Home() {
           id: recipe.id,
           title: recipe.title || recipe.name || '',
           description: recipe.description || '',
-          image: recipe.dishImage || recipe.image || '',
+          image: recipe.dish_image_url || recipe.dishImage || recipe.image || '',
+          dish_image_url: recipe.dish_image_url || recipe.dishImage || recipe.image || '',
         }))
 
       setRecipes(validRecipes)
@@ -101,17 +108,17 @@ export default function Home() {
 
   if (initialLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-blue mb-4"></div>
-          <p className="text-gray-600 font-medium">Loading recipes...</p>
+          <p className="text-gray-300 font-medium">Loading recipes...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto">
         <Header />
         <ChatBox onQuery={handleQuery} isLoading={loading} />

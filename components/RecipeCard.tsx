@@ -9,8 +9,9 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
 // Helper function to get the correct image URL
 const getImageUrl = (imagePath?: string): string => {
   if (!imagePath) return 'https://via.placeholder.com/400x225?text=Recipe'
-  if (imagePath.startsWith('http')) return imagePath
-  return `${BASE_URL}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) return imagePath
+  if (imagePath.startsWith('/')) return `${BASE_URL}${imagePath}`
+  return `${BASE_URL}/${imagePath}`
 }
 
 interface RecipeCardProps {
@@ -19,9 +20,10 @@ interface RecipeCardProps {
 }
 
 export default function RecipeCard({ recipe, index }: RecipeCardProps) {
-  // Fallback for missing fields
   const title = recipe.title || 'Untitled Recipe'
   const description = recipe.description || 'No description available'
+  // Prioritize dish_image_url over image
+  const imageUrl = (recipe as any).dish_image_url || recipe.image || ''
 
   return (
     <Link href={`/recipe/${recipe.id}`}>
@@ -30,11 +32,11 @@ export default function RecipeCard({ recipe, index }: RecipeCardProps) {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4, delay: index * 0.1 }}
         whileHover={{ y: -8, transition: { duration: 0.2 } }}
-        className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow cursor-pointer"
+        className="bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow cursor-pointer border border-gray-700 hover:border-primary-blue"
       >
-        <div className="relative aspect-[16/9] overflow-hidden">
+        <div className="relative aspect-[16/9] overflow-hidden bg-gray-700">
           <img
-            src={getImageUrl(recipe.image)}
+            src={getImageUrl(imageUrl)}
             alt={title}
             className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
             onError={(e) => {
@@ -44,10 +46,10 @@ export default function RecipeCard({ recipe, index }: RecipeCardProps) {
           />
         </div>
         <div className="p-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-2 line-clamp-2">
+          <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">
             {title}
           </h3>
-          <p className="text-gray-600 text-sm line-clamp-2">
+          <p className="text-gray-300 text-sm line-clamp-2">
             {description}
           </p>
         </div>
