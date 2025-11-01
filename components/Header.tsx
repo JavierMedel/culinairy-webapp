@@ -11,11 +11,10 @@ export default function Header() {
       className="text-center py-12 px-4"
     >
       <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-        <span className="text-primary-blue">CulinAIry</span>
-        <span className="text-gray-800">.io</span>
+        <span className="text-primary-blue">CulinAIry Agent</span>
       </h1>
       <p className="text-lg md:text-xl text-gray-600 font-medium">
-        Effortless AI Meal Planning. Picture It. Cook It. Enjoy It.
+        The Intelligent Kitchen Agent. Picture It. Cook It. Enjoy It.
       </p>
     </motion.header>
   )

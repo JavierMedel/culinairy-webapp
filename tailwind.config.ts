@@ -9,10 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: {
-          blue: '#2563eb',
-          red: '#ef4444',
-        },
+        'primary-blue': '#2563eb',
+        'primary-red': '#ef4444',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
@@ -22,4 +20,3 @@ const config: Config = {
   plugins: [],
 }
 export default config
-

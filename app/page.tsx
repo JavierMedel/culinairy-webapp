@@ -42,20 +42,55 @@ export default function Home() {
   const handleQuery = async (query: string) => {
     setLoading(true)
     try {
-      const response = await fetch(`${BASE_URL}/query`, {
+      // Step 1: Search for recipes
+      const searchResponse = await fetch(`${BASE_URL}/search-recipes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'accept': 'application/json',
         },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ 
+          query,
+          top_k: 3 
+        }),
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch recipes')
+      if (!searchResponse.ok) {
+        throw new Error('Failed to search recipes')
       }
 
-      const data = await response.json()
-      setRecipes(data.recipes || [])
+      const searchData = await searchResponse.json()
+      const { recipe_ids } = searchData
+
+      // Step 2: Fetch full recipe details for each recipe ID
+      const recipePromises = recipe_ids.map((recipeId: string) =>
+        fetch(`${BASE_URL}/recipe/${recipeId}`)
+          .then((res) => {
+            if (!res.ok) {
+              console.error(`Failed to fetch recipe ${recipeId}`)
+              return null
+            }
+            return res.json()
+          })
+          .catch((error) => {
+            console.error(`Error fetching recipe ${recipeId}:`, error)
+            return null
+          })
+      )
+
+      const recipeResults = await Promise.all(recipePromises)
+      
+      // Filter out null results and map to Recipe format
+      const validRecipes = recipeResults
+        .filter((recipe) => recipe !== null)
+        .map((recipe) => ({
+          id: recipe.id,
+          title: recipe.title || recipe.name || '',
+          description: recipe.description || '',
+          image: recipe.dishImage || recipe.image || '',
+        }))
+
+      setRecipes(validRecipes)
     } catch (error) {
       console.error('Error fetching recipes:', error)
       setRecipes([])
