@@ -3,6 +3,9 @@
 import { motion } from 'framer-motion'
 import { Recipe } from '@/types'
 import Link from 'next/link'
+import { useState } from 'react'
+import { useShoppingList } from '@/store/shoppingList'
+import { useToast } from '@/components/ToastProvider'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
 
@@ -24,36 +27,130 @@ export default function RecipeCard({ recipe, index }: RecipeCardProps) {
   const description = recipe.description || 'No description available'
   // Prioritize dish_image_url over image
   const imageUrl = (recipe as any).dish_image_url || recipe.image || ''
+  const { addRecipe, isInList } = useShoppingList()
+  const { showToast } = useToast()
+  const [isLoading, setIsLoading] = useState(false)
+  const [isAdding, setIsAdding] = useState(false)
+
+  const handleAddToShoppingList = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (isInList(recipe.id)) {
+      showToast(`${title} is already in your shopping list`, 'info')
+      return
+    }
+
+    setIsAdding(true)
+    setIsLoading(true)
+
+    try {
+      // Fetch full recipe details to get ingredients
+      const response = await fetch(`${BASE_URL}/recipe/${recipe.id}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch recipe details')
+      }
+
+      const recipeDetail = await response.json()
+      const ingredients = recipeDetail.ingredients || []
+
+      // Map ingredients to shopping list format
+      const shoppingListIngredients = ingredients.map((ing: any) => ({
+        name: ing.name || '',
+        quantity: ing.quantity || '',
+      }))
+
+      // Add to shopping list
+      addRecipe({
+        id: recipe.id,
+        title: recipeDetail.title || recipeDetail.name || title,
+        ingredients: shoppingListIngredients,
+      })
+
+      showToast(`✅ Added ${recipeDetail.title || recipeDetail.name || title} to shopping list`)
+    } catch (error) {
+      console.error('Error adding to shopping list:', error)
+      showToast('Failed to add recipe to shopping list', 'error')
+    } finally {
+      setIsLoading(false)
+      setIsAdding(false)
+    }
+  }
 
   return (
-    <Link href={`/recipe/${recipe.id}`}>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4, delay: index * 0.1 }}
-        whileHover={{ y: -8, transition: { duration: 0.2 } }}
-        className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow cursor-pointer border border-gray-200 dark:border-gray-700 hover:border-primary-blue"
-      >
-        <div className="relative aspect-[16/9] overflow-hidden bg-gray-100 dark:bg-gray-700">
-          <img
-            src={getImageUrl(imageUrl)}
-            alt={title}
-            className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement
-              target.src = 'https://via.placeholder.com/400x225?text=Recipe'
-            }}
-          />
-        </div>
-        <div className="p-6">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
-            {title}
-          </h3>
-          <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">
-            {description}
-          </p>
-        </div>
-      </motion.div>
-    </Link>
+    <div className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow border border-gray-200 dark:border-gray-700 hover:border-primary-blue">
+      <Link href={`/recipe/${recipe.id}`}>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, delay: index * 0.1 }}
+          whileHover={{ y: -8, transition: { duration: 0.2 } }}
+          className="cursor-pointer"
+        >
+          <div className="relative aspect-[16/9] overflow-hidden bg-gray-100 dark:bg-gray-700">
+            <img
+              src={getImageUrl(imageUrl)}
+              alt={title}
+              className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement
+                target.src = 'https://via.placeholder.com/400x225?text=Recipe'
+              }}
+            />
+          </div>
+          <div className="p-6">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
+              {title}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2 mb-4">
+              {description}
+            </p>
+          </div>
+        </motion.div>
+      </Link>
+      <div className="px-6 pb-6">
+        <motion.button
+          onClick={handleAddToShoppingList}
+          disabled={isLoading || isInList(recipe.id)}
+          whileHover={{ scale: isLoading ? 1 : 1.02 }}
+          whileTap={{ scale: isLoading ? 1 : 0.98 }}
+          className={`w-full px-4 py-2 rounded-lg font-semibold text-sm transition-colors ${
+            isInList(recipe.id)
+              ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+              : 'bg-primary-blue text-white hover:bg-blue-700'
+          } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+        >
+          {isLoading ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg
+                className="animate-spin h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Adding...
+            </span>
+          ) : isInList(recipe.id) ? (
+            '✓ Already in Shopping List'
+          ) : (
+            '🛒 Add to Shopping List'
+          )}
+        </motion.button>
+      </div>
+    </div>
   )
 }

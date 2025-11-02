@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { RecipeDetail } from '@/types'
 import Link from 'next/link'
+import { useShoppingList } from '@/store/shoppingList'
+import { useToast } from '@/components/ToastProvider'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
 
@@ -28,6 +30,8 @@ export default function RecipeDetailPage({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [recipeId, setRecipeId] = useState<string>('')
+  const { addRecipe, isInList, removeRecipe } = useShoppingList()
+  const { showToast } = useToast()
 
   // Handle async params for Next.js 14
   useEffect(() => {
@@ -221,6 +225,56 @@ export default function RecipeDetailPage({
                 ))}
               </div>
             )}
+
+            {/* Add to Shopping List Button */}
+            <motion.button
+              onClick={() => {
+                if (!recipe.ingredients || recipe.ingredients.length === 0) {
+                  showToast('This recipe has no ingredients', 'info')
+                  return
+                }
+
+                if (isInList(recipe.id)) {
+                  removeRecipe(recipe.id)
+                  showToast(`Removed ${recipe.title} from shopping list`, 'info')
+                } else {
+                  const shoppingListIngredients = recipe.ingredients.map((ing: any) => ({
+                    name: ing.name || '',
+                    quantity: ing.quantity || '',
+                  }))
+
+                  addRecipe({
+                    id: recipe.id,
+                    title: recipe.title || recipe.name || 'Untitled Recipe',
+                    ingredients: shoppingListIngredients,
+                  })
+                  showToast(`✅ Added ${recipe.title} to shopping list`)
+                }
+              }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={`w-full px-6 py-3 rounded-lg font-semibold text-base transition-colors ${
+                isInList(recipe.id)
+                  ? 'bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-400 dark:hover:bg-gray-600'
+                  : 'bg-primary-blue text-white hover:bg-blue-700'
+              }`}
+            >
+              {isInList(recipe.id) ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Remove from Shopping List
+                </span>
+              ) : (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  Add to Shopping List
+                </span>
+              )}
+            </motion.button>
           </motion.div>
         </div>
 

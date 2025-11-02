@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { ThemeProvider } from '@/components/ThemeProvider'
+import { ToastProvider } from '@/components/ToastProvider'
 import NavigationHeader from '@/components/NavigationHeader'
 
 export const metadata: Metadata = {
@@ -17,8 +18,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider>
-          <NavigationHeader />
-          {children}
+          <ToastProvider>
+            <NavigationHeader />
+            {children}
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>
