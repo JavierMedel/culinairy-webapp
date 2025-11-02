@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { ThemeProvider } from '@/components/ThemeProvider'
+import NavigationHeader from '@/components/NavigationHeader'
 
 export const metadata: Metadata = {
   title: 'CulinAIry Agent — The Intelligent Kitchen Agent - Effortless AI Meal Planning',
@@ -12,8 +14,13 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ThemeProvider>
+          <NavigationHeader />
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   )
 }

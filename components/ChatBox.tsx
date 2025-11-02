@@ -33,7 +33,7 @@ export default function ChatBox({ onQuery, isLoading }: ChatBoxProps) {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Ask me for a recipe..."
           disabled={isLoading}
-          className="flex-1 px-6 py-4 rounded-2xl bg-gray-800 border-2 border-gray-700 text-white placeholder-gray-400 focus:border-primary-blue focus:outline-none text-lg shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 px-6 py-4 rounded-2xl bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-primary-blue focus:outline-none text-lg shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         />
         <motion.button
           type="submit"

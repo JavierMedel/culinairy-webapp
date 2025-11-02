@@ -18,22 +18,47 @@ export default function Home() {
     const fetchDefaultRecipes = async () => {
       try {
         setInitialLoading(true)
+        console.log('Fetching recipes from:', `${BASE_URL}/recipes?limit=9`)
         const response = await fetch(`${BASE_URL}/recipes?limit=9`)
         
         if (!response.ok) {
-          throw new Error('Failed to fetch recipes')
+          console.error('Response not OK:', response.status, response.statusText)
+          throw new Error(`Failed to fetch recipes: ${response.status} ${response.statusText}`)
         }
         
         const data = await response.json()
+        console.log('Received data:', data)
+        
+        // Handle different response formats
+        let recipeArray = []
+        if (Array.isArray(data)) {
+          recipeArray = data
+        } else if (data.recipes && Array.isArray(data.recipes)) {
+          recipeArray = data.recipes
+        } else if (data.data && Array.isArray(data.data)) {
+          recipeArray = data.data
+        } else {
+          console.warn('Unexpected response format:', data)
+          recipeArray = []
+        }
+        
         // Map recipes to ensure dish_image_url is available
-        const mappedRecipes = data.map((recipe: any) => ({
-          ...recipe,
+        const mappedRecipes = recipeArray.map((recipe: any) => ({
+          id: recipe.id || recipe._id || Math.random().toString(),
+          title: recipe.title || recipe.name || 'Untitled Recipe',
+          description: recipe.description || '',
           image: recipe.dish_image_url || recipe.dishImage || recipe.image || '',
           dish_image_url: recipe.dish_image_url || recipe.dishImage || recipe.image || '',
         }))
+        
+        console.log('Mapped recipes:', mappedRecipes)
         setRecipes(mappedRecipes)
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching default recipes:', error)
+        // Show more details in console
+        if (error.message) {
+          console.error('Error message:', error.message)
+        }
         // Set empty array on error to show no recipes message
         setRecipes([])
       } finally {
@@ -108,17 +133,17 @@ export default function Home() {
 
   if (initialLoading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-blue mb-4"></div>
-          <p className="text-gray-300 font-medium">Loading recipes...</p>
+          <p className="text-gray-700 dark:text-gray-300 font-medium">Loading recipes...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <main className="min-h-screen bg-gray-900 text-white">
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
       <div className="max-w-7xl mx-auto">
         <Header />
         <ChatBox onQuery={handleQuery} isLoading={loading} />

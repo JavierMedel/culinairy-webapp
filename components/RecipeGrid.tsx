@@ -16,7 +16,7 @@ export default function RecipeGrid({ recipes }: RecipeGridProps) {
         animate={{ opacity: 1 }}
         className="text-center py-16 px-4"
       >
-        <p className="text-xl text-gray-300 font-medium">
+        <p className="text-xl text-gray-600 dark:text-gray-300 font-medium">
           No recipes found. Try another query!
         </p>
       </motion.div>

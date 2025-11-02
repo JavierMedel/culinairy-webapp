@@ -32,9 +32,9 @@ export default function RecipeCard({ recipe, index }: RecipeCardProps) {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4, delay: index * 0.1 }}
         whileHover={{ y: -8, transition: { duration: 0.2 } }}
-        className="bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow cursor-pointer border border-gray-700 hover:border-primary-blue"
+        className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow cursor-pointer border border-gray-200 dark:border-gray-700 hover:border-primary-blue"
       >
-        <div className="relative aspect-[16/9] overflow-hidden bg-gray-700">
+        <div className="relative aspect-[16/9] overflow-hidden bg-gray-100 dark:bg-gray-700">
           <img
             src={getImageUrl(imageUrl)}
             alt={title}
@@ -46,10 +46,10 @@ export default function RecipeCard({ recipe, index }: RecipeCardProps) {
           />
         </div>
         <div className="p-6">
-          <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
             {title}
           </h3>
-          <p className="text-gray-300 text-sm line-clamp-2">
+          <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">
             {description}
           </p>
         </div>

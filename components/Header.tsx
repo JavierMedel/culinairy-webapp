@@ -13,7 +13,7 @@ export default function Header() {
       <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
         <span className="text-primary-blue">CulinAIry Agent</span>
       </h1>
-      <p className="text-lg md:text-xl text-gray-400 font-medium">
+      <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 font-medium">
         The Intelligent Kitchen Agent. Picture It. Cook It. Enjoy It.
       </p>
     </motion.header>

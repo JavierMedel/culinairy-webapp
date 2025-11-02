@@ -74,10 +74,10 @@ export default function RecipeDetailPage({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-blue mb-4"></div>
-          <p className="text-gray-300 font-medium">Loading recipe...</p>
+          <p className="text-gray-700 dark:text-gray-300 font-medium">Loading recipe...</p>
         </div>
       </div>
     )
@@ -85,9 +85,9 @@ export default function RecipeDetailPage({
 
   if (error || !recipe) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-xl text-gray-300 font-medium mb-6">{error || 'Recipe not found'}</p>
+          <p className="text-xl text-gray-700 dark:text-gray-300 font-medium mb-6">{error || 'Recipe not found'}</p>
           <Link href="/">
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -103,7 +103,7 @@ export default function RecipeDetailPage({
   }
 
   return (
-    <main className="min-h-screen bg-gray-900 text-white">
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Back Button */}
         <motion.div
@@ -116,7 +116,7 @@ export default function RecipeDetailPage({
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-6 py-2 bg-gray-800 text-white rounded-full font-semibold shadow-md hover:bg-gray-700 transition-colors border border-gray-700"
+              className="px-6 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-full font-semibold shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border border-gray-300 dark:border-gray-700"
             >
               ← Back to Recipes
             </motion.button>
@@ -135,7 +135,7 @@ export default function RecipeDetailPage({
             {(() => {
               const dishImage = (recipe as any).dish_image_url || recipe.dishImage || recipe.image || ''
               return dishImage ? (
-                <div className="relative w-full aspect-[4/5] lg:aspect-square rounded-2xl overflow-hidden bg-gray-800 shadow-2xl">
+                <div className="relative w-full aspect-[4/5] lg:aspect-square rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 shadow-2xl">
                   <img
                     src={getImageUrl(dishImage)}
                     alt={recipe.title}
@@ -158,21 +158,21 @@ export default function RecipeDetailPage({
             className="flex flex-col justify-center"
           >
             {/* Title */}
-            <h1 className="text-5xl lg:text-6xl font-bold text-white mb-3">
+            <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-3">
               {recipe.title}
             </h1>
 
             {/* Subtitle */}
             {recipe.subtitle && (
-              <p className="text-xl text-gray-400 mb-6">
+              <p className="text-xl text-gray-600 dark:text-gray-400 mb-6">
                 {recipe.subtitle}
               </p>
             )}
 
             {/* Description Box */}
             {recipe.description && (
-              <div className="bg-gray-800 rounded-2xl p-6 mb-6 border border-gray-700">
-                <p className="text-lg text-gray-300 leading-relaxed whitespace-pre-wrap">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-6 border border-gray-200 dark:border-gray-700">
+                <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
                   {recipe.description}
                 </p>
               </div>
@@ -180,7 +180,7 @@ export default function RecipeDetailPage({
 
             {/* Stats/Metadata */}
             {(recipe.totalTime || recipe.prepTime || recipe.cookTime || recipe.calories) && (
-              <div className="flex flex-wrap gap-6 mb-6 text-gray-300">
+              <div className="flex flex-wrap gap-6 mb-6 text-gray-700 dark:text-gray-300">
                 {recipe.totalTime && (
                   <div className="flex items-center gap-2">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,7 +214,7 @@ export default function RecipeDetailPage({
                 {recipe.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="px-4 py-2 bg-gray-800 text-white rounded-full text-sm font-medium border border-gray-700"
+                    className="px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-full text-sm font-medium border border-gray-300 dark:border-gray-700"
                   >
                     {tag}
                   </span>
@@ -232,7 +232,7 @@ export default function RecipeDetailPage({
             transition={{ duration: 0.5, delay: 0.3 }}
             className="mb-12"
           >
-            <h2 className="text-3xl font-bold text-white mb-6">Ingredients</h2>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Ingredients</h2>
             <div className="flex flex-wrap gap-4">
               {recipe.ingredients.map((ingredient: any, index) => {
                 const ingredientImage = ingredient.image_url || ingredient.image || ''
@@ -242,10 +242,10 @@ export default function RecipeDetailPage({
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
-                    className="bg-gray-800 rounded-2xl p-4 border border-gray-700 hover:border-primary-blue transition-colors"
+                    className="bg-white dark:bg-gray-800 rounded-2xl p-4 border border-gray-200 dark:border-gray-700 hover:border-primary-blue transition-colors"
                   >
                     {ingredientImage && (
-                      <div className="relative w-20 h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden mb-3 bg-gray-700">
+                      <div className="relative w-20 h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden mb-3 bg-gray-100 dark:bg-gray-700">
                         <img
                           src={getImageUrl(ingredientImage)}
                           alt={ingredient.name || 'Ingredient'}
@@ -258,7 +258,7 @@ export default function RecipeDetailPage({
                       </div>
                     )}
                     {ingredient.name && (
-                      <p className="text-sm font-medium text-gray-300 text-center whitespace-nowrap">
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300 text-center whitespace-nowrap">
                         {ingredient.name}
                       </p>
                     )}
@@ -279,7 +279,7 @@ export default function RecipeDetailPage({
               transition={{ duration: 0.5, delay: 0.5 }}
               className="mb-12"
             >
-              <h2 className="text-3xl font-bold text-white mb-6">Cooking Steps</h2>
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Cooking Steps</h2>
               <div className="space-y-6">
                 {steps.map((step: any, index: number) => (
                 <motion.div
@@ -287,7 +287,7 @@ export default function RecipeDetailPage({
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.6 + index * 0.1 }}
-                  className="bg-gray-800 rounded-2xl p-6 border border-gray-700 hover:border-gray-600 transition-colors"
+                  className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors"
                 >
                   <div className="flex flex-col md:flex-row gap-6">
                     <div className="flex-1">
@@ -297,7 +297,7 @@ export default function RecipeDetailPage({
                         </div>
                         <div className="flex-1">
                           {(step.instruction || step.text || step.description) && (
-                            <p className="text-lg text-gray-200 leading-relaxed whitespace-pre-wrap">
+                            <p className="text-lg text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">
                               {step.instruction || step.text || step.description}
                             </p>
                           )}
@@ -305,7 +305,7 @@ export default function RecipeDetailPage({
                       </div>
                     </div>
                     {(step.image || step.image_url || step.step_image) && (
-                      <div className="flex-shrink-0 w-full md:w-80 h-48 md:h-auto md:aspect-video overflow-hidden rounded-xl bg-gray-700">
+                      <div className="flex-shrink-0 w-full md:w-80 h-48 md:h-auto md:aspect-video overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-700">
                         <img
                           src={getImageUrl(step.image_url || step.step_image || step.image)}
                           alt={`Step ${step.step_number !== undefined ? step.step_number : (step.stepNumber !== undefined ? step.stepNumber : index + 1)}`}
