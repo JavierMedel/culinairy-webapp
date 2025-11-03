@@ -4,6 +4,10 @@ export interface Recipe {
   description: string
   image: string
   dish_image_url?: string
+  total_time?: string
+  servings?: string
+  difficulty?: string
+  calories_per_serving?: string
 }
 
 export interface CookingStep {
